@@ -8,9 +8,13 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.OptionalDouble;
 import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
 import java.util.stream.Stream;
+
+import com.beans.Patient;
 
 public class StreamCreations {
 
@@ -55,5 +59,62 @@ public class StreamCreations {
 		// 6) Streams for Primitive values
 		DoubleStream streamDouble = DoubleStream.of(4.9,45.9,990.90);
 		streamDouble.forEach(System.out::println);
+		
+		
+		
+		//Using map-filter-reduce
+		
+		System.out.println("****************************************************");
+		List<Patient> list = new ArrayList<Patient>();
+		list.add(new Patient("Nagesh",38.6f));
+		list.add(new Patient("Naresh",36.6f));
+		list.add(new Patient("Nishant",39.6f));
+		
+		OptionalDouble average = list.stream()
+				.mapToDouble(patient->patient.getTemperature())
+				.filter(v->v>37)
+				.average();
+		
+		ArrayList<Patient> listOfPatients = (ArrayList<Patient>) list
+				.stream()
+				.map((patient)->
+				{patient.setTemperature(0.0f);
+				               return patient;})
+				.collect(Collectors.toList());
+		
+		if(average.isPresent())
+		  System.out.println(average.getAsDouble());
+		System.out.println(listOfPatients);
+		
+		System.out.println("****************************************************");
+		//Creating your own reduce method
+		
+		Stream<Double> reduceExample = Stream.of(1.6,677.8,89.90,78.9);
+		
+		Optional<Double> opt = reduceExample.reduce((v,v2)->v+v2);
+		
+		opt.ifPresent(System.out::println);
+		
+		System.out.println("**********empty Optional example*******");
+		//empty Optional example
+		
+		OptionalDouble optD = OptionalDouble.empty();
+		streamDouble = DoubleStream.of(4.9,45.9,990.90);
+		optD = streamDouble.findAny();
+		
+		optD.ifPresent(System.out::println);
+	 
+		Optional<Patient> patient = Optional.empty();
+		
+		patient = listOfPatients.stream().findFirst();
+		
+		patient.ifPresent(System.out::println);
+		
+		System.out.println("**********orElse Optional example*******");
+		
+		Optional<Patient> emptyPatient = Optional.empty();
+		Patient elseP = emptyPatient.orElse(new Patient("gaurav",67.8f));
+		System.out.println(elseP);
 	}
+	
 }
