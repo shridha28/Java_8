@@ -5,6 +5,7 @@ import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +28,10 @@ public class StreamCreations {
 		strs.add("Shridha");
 		strs.add("Neeraja");
 		strs.add("Priyanka");
+		//Stream<T>
+		Stream<String> streamStr = strs.stream();
+		System.out.println("My list" + strs);
+		System.out.println("My Stream" + streamStr);
 		
 		strs = strs.stream().map((s)->s.toUpperCase()).collect(Collectors.toList());
 		
@@ -57,7 +62,7 @@ public class StreamCreations {
 		str.forEach(System.out::println);
 		
 		// 6) Streams for Primitive values
-		DoubleStream streamDouble = DoubleStream.of(4.9,45.9,990.90);
+		DoubleStream streamDouble = DoubleStream.of(4.9f,45.9f,990.90f);
 		streamDouble.forEach(System.out::println);
 		
 		
@@ -66,19 +71,26 @@ public class StreamCreations {
 		
 		System.out.println("****************************************************");
 		List<Patient> list = new ArrayList<Patient>();
-		list.add(new Patient("Nagesh",38.6f));
-		list.add(new Patient("Naresh",36.6f));
-		list.add(new Patient("Nishant",39.6f));
+		list.add(new Patient("Nagesh",38.6));
+		list.add(new Patient("Naresh",36.6));
+		list.add(new Patient("Nishant",39.6));
+		
+		System.out.println("eeeeeeeeeeeeeeeeeek");
 		
 		OptionalDouble average = list.stream()
 				.mapToDouble(patient->patient.getTemperature())
+				.peek(System.out::println)
 				.filter(v->v>37)
 				.average();
+		
+		//sum,average,count
+	
+		
 		
 		ArrayList<Patient> listOfPatients = (ArrayList<Patient>) list
 				.stream()
 				.map((patient)->
-				{patient.setTemperature(0.0f);
+				{patient.setTemperature(0.0);
 				               return patient;})
 				.collect(Collectors.toList());
 		
@@ -96,6 +108,7 @@ public class StreamCreations {
 		opt.ifPresent(System.out::println);
 		
 		System.out.println("**********empty Optional example*******");
+		
 		//empty Optional example
 		
 		OptionalDouble optD = OptionalDouble.empty();
@@ -113,8 +126,65 @@ public class StreamCreations {
 		System.out.println("**********orElse Optional example*******");
 		
 		Optional<Patient> emptyPatient = Optional.empty();
-		Patient elseP = emptyPatient.orElse(new Patient("gaurav",67.8f));
+		Patient elseP = emptyPatient.orElse(new Patient("gaurav",67.8));
 		System.out.println(elseP);
+		
+		
+		System.out.println("**********Searching in Streams*******");
+		//Searching in Streams
+		
+		List<Patient> listOfP = new ArrayList<Patient>();
+		listOfP.add(new Patient("Nagesh",38.6));
+		listOfP.add(new Patient("Naresh",36.6));
+		listOfP.add(new Patient("Nishant",39.6));
+		listOfP.add(new Patient("Nishant",40.6));
+		
+		//anyMatch
+		boolean hasTempG = listOfP.stream().anyMatch((p)->p.getTemperature()>40);
+		System.out.println("anyMatch:"+hasTempG);
+		
+		//noneMatch
+		boolean noneMatch = listOfP.stream().noneMatch((p)->p.getTemperature()>40);
+		System.out.println("noneMatch:"+noneMatch);
+		
+		//allMatch
+		boolean allMatch = listOfP.stream().allMatch((p)->p.getName().startsWith("N"));
+		System.out.println("allMatch:"+allMatch);
+		
+		
+		System.out.println("**********Sorting in Streams*******");
+		
+		//1) sorted method for String,Wrappers etc
+		Stream<String> myStringStream = Stream.of("Hitesh","Suraj","Chetan","Pranav");
+		myStringStream.sorted().forEach(System.out::println);
+		
+		System.out.println("**********Custom class*******");
+		// for Complex objects-> here patient class implements Comparable
+		listOfP.stream().sorted().forEach(System.out::println);
+		
+		//Sorting using comparator
+		
+		System.out.println("**********Using Comparator*******");
+		listOfP.stream().sorted((p1,p2)->Double.compare(p2.getTemperature(),
+				p1.getTemperature())).forEach(System.out::println);
+		
+		System.out.println("**********Using lambda Comparator*******");
+		Comparator<Patient> comp = (p1,p2)->p2.getName().compareTo(p1.getName());
+		listOfP.stream().sorted(comp).forEach(System.out::println);
+		
+		System.out.println("**********Using lambda Comparator reversed*******");
+		
+		listOfP.stream().sorted(comp.reversed()).forEach(System.out::println);
+		
+		System.out.println("**********Comparing method of Comparator*******");
+		//Comparator<Patient> comp = (Comparator.comparing(Patient::getName));
+		listOfP.stream().sorted(Comparator.comparing(Patient::getTemperature)).forEach(System.out::println);
+		
+		System.out.println("**********Comparing by name and then temperature*******");
+		listOfP.stream().sorted(comp.thenComparing(Comparator.comparing(Patient::getTemperature))).
+		forEach(System.out::println);
+		
+		
 	}
 	
 }

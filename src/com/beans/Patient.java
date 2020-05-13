@@ -1,9 +1,9 @@
 package com.beans;
 
-public class Patient {
+public class Patient implements Comparable<Patient>{
 
 	private String name;
-	private float temperature;
+	private Double temperature;
 	
 	public String getName() {
 		return name;
@@ -11,13 +11,13 @@ public class Patient {
 	public void setName(String name) {
 		this.name = name;
 	}
-	public float getTemperature() {
+	public Double getTemperature() {
 		return temperature;
 	}
-	public void setTemperature(float temperature) {
+	public void setTemperature(Double temperature) {
 		this.temperature = temperature;
 	}
-	public Patient(String name, float temperature) {
+	public Patient(String name, Double temperature) {
 		super();
 		this.name = name;
 		this.temperature = temperature;
@@ -25,6 +25,11 @@ public class Patient {
 	
 	public String toString() {
 		return name + temperature;
+	}
+	@Override
+	public int compareTo(Patient o) {
+		
+		return this.getName().compareTo(o.getName());
 	}
 	
 	
